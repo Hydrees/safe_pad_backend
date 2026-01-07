@@ -1,13 +1,19 @@
-const mongoose = require("mongoose");
+import { pkg }  from "@prisma/client";
 
-const connectDB = async () => {
-  try {
-    await mongoose.connect(process.env.MONGODB_URI);
-    console.log("MongoDB Connected");
-  } catch (error) {
-    console.error("MongoDB connection error:", error);
-    process.exit(1);
-  }
-};
+const { PrismaClient } = pkg;
+const prisma =
+  global.prisma ||
+  new PrismaClient({
+    log:
+      process.env.NODE_ENV === "development"
+        ? ["query", "info", "warn", "error"]
+        : ["error"],
+    errorFormat: "pretty",
+  });
 
-module.exports = connectDB;
+// ✔ Prevent multiple instances in development
+if (process.env.NODE_ENV !== "production") {
+  global.prisma = prisma;
+}
+
+export default prisma;

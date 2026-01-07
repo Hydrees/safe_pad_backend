@@ -1,25 +1,15 @@
+import express from "express";
+import cors from "cors";
 
-require("dotenv").config();
-const express = require("express");
-const connectDB = require("./config/db");
-const cors = require("cors");
-
-const authRoutes = require("./routes/auth.routes");
-const noteRoutes = require("./routes/notes.routes");
-
-const app = express();
+app.use(
+  cors({
+    origin: process.env.CLIENT_ORIGIN || true,
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    credentials: true,
+  })
+);
 app.use(express.json());
 
-app.use(cors({
-     origin: "http://localhost:5173",
-     credentials: true
- }));
+app.get("/", (req, res) => res.json({ message: "SafePad API running" }));
 
-// Connect DB
-connectDB();
-
-// Routes
-app.use("/api/auth", authRoutes);
-app.use("/api/notes", noteRoutes);
-
-app.listen(5000, () => console.log("Server running on port 5000"));
+export default app;
